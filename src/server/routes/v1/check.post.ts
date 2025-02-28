@@ -1,7 +1,8 @@
 import { createError, defineEventHandler, getRequestHeader, readBody, } from 'h3';
 import { GeneralCheckResponse, UrlInspectionResponse } from 'src/server/models/model';
 import axios, {AxiosResponseHeaders} from 'axios'
-import * as parseUrl from 'parse-url';
+import parseUrl from "parse-url";
+// import parseUrl from "parse-url";
 
 export class HealthChecker {
   private urlInspectionResults: UrlInspectionResponse[] = [];
@@ -14,6 +15,8 @@ export class HealthChecker {
 
   public async check(url: string, rootChecker?: HealthChecker): Promise<GeneralCheckResponse> {
     const formattedUrl = this.formatUrl(url);
+    let pUrl = parseUrl(formattedUrl);
+    console.log(pUrl);
     const generalResponse: GeneralCheckResponse = {
       statusCode: 0,
       message: '',
@@ -44,12 +47,7 @@ export class HealthChecker {
       };
       root.urlInspectionResults.push(inspectionResponse);
       // Wrap URL parsing in try-catch
-      let parsedUrl: parseUrl.ParsedUrl;
-      try {
-        parsedUrl = parseUrl(formattedUrl);
-      } catch (error) {
-        throw error;
-      }
+      let parsedUrl = parseUrl(formattedUrl);
       // Add initial full redirect
       generalResponse.fullRedirectChains.push(
         { 
